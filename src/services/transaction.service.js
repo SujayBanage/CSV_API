@@ -18,6 +18,22 @@ export async function bulkInsert(itemsArray) {
   return true;
 }
 
+export function findAllTransactions(filterQuery) {
+  return Transaction.find(filterQuery);
+}
+
+export function sortTransaction(transactionCursor, sortField) {
+  return transactionCursor.sort(sortField);
+}
+
+export function limit(transactionCursor, limit, page) {
+  if (page) {
+    const skip = (page - 1) * limit;
+    return transactionCursor.skip(skip).limit(limit);
+  }
+  return transactionCursor.limit(limit);
+}
+
 export async function insertTransaction(insertQuery) {
   if (Array.isArray(insertQuery)) {
     const res = await Transaction.insertMany(insertQuery);
@@ -27,7 +43,7 @@ export async function insertTransaction(insertQuery) {
     return true;
   }
 
-  const res = await Transaction.insertOne(insertQuery);
+  const res = await Transaction.create(insertQuery);
   if (!res) {
     return false;
   }
@@ -35,11 +51,11 @@ export async function insertTransaction(insertQuery) {
 }
 
 export async function getTransactionById(_id) {
-  const res = await Transaction.findById(_id);
+  const res = await Transaction.findById({ _id });
   if (!res) {
     return false;
   }
-  return true;
+  return res;
 }
 
 export async function deleteTransactionById(_id) {
@@ -51,12 +67,36 @@ export async function deleteTransactionById(_id) {
 }
 
 export async function updateTransactionById({ _id, updateObj }) {
+  if (updateObj.Date) {
+    updateObj.Date = new Date(updateObj.Date);
+  }
   const res = await Transaction.findOneAndUpdate(
     { _id },
-    { $set: { updateObj } }
+    { $set: { ...updateObj } },
+    {
+      new: true,
+    }
   );
   if (!res) {
     return false;
   }
-  return true;
+  return res;
+}
+
+export async function updateTransactions(filterQuery, updateQuery) {
+  if (updateQuery.Date) {
+    updateQuery.Date = new Date(updateQuery.Date);
+  }
+  const result = await Transaction.updateMany(filterQuery, {
+    $set: { ...updateQuery },
+  });
+  return result ? true : false;
+}
+
+export async function deleteTransactions(filterQuery) {
+  if (filterQuery.Date) {
+    filterQuery.Date = new Date(filterQuery.Date);
+  }
+  const result = await Transaction.deleteMany(filterQuery);
+  return result ? true : false;
 }

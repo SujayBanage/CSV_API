@@ -44,9 +44,9 @@ export async function uploadCsvHandler(req, res) {
         : -1 * parseInt(transaction.Amount);
     const inr = Math.round(amount / rate);
     const dateArr = transaction.Date.split("-");
-    const formattedDate = `${dateArr[dateArr.length - 1]}-${dateArr[1]}-${
-      dateArr[0]
-    }`;
+    const formattedDate = new Date(
+      `${dateArr[dateArr.length - 1]}-${dateArr[1]}-${dateArr[0]}`
+    );
     return {
       Description: transaction.Description,
       Date: formattedDate,

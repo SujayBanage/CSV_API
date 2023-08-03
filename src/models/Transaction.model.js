@@ -1,20 +1,31 @@
 import mongoose from "mongoose";
-
+import validator from "validator";
+const { isDate } = validator;
 const transactionSchema = new mongoose.Schema({
   Date: {
     type: Date,
-    require: true,
+    required: true,
+    validate: {
+      validator: function (value) {
+        return isDate(value, {
+          format: "YYYY-MM-DD",
+          delimiters: ["-"],
+        });
+      },
+      message: (props) => `${props.value} is not valid date`,
+    },
   },
   Description: {
     type: String,
-    require: true,
+    required: true,
   },
   Amount: {
     type: Number,
-    require: true,
+    required: true,
   },
   Currency: {
     type: String,
+    required: true,
     default: "INR",
   },
 });
