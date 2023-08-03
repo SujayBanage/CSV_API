@@ -1,8 +1,9 @@
 import csv from "csvtojson";
 import { getRates } from "../utils/currenyConverter.js";
 import { bulkInsert } from "../services/transaction.service.js";
+import catchAsync from "../utils/catchAsync.js";
 
-export async function uploadCsvHandler(req, res) {
+export const uploadCsvHandler = catchAsync(async (req, res) => {
   console.log(req.file);
 
   if (!req.file) {
@@ -68,4 +69,4 @@ export async function uploadCsvHandler(req, res) {
     status: true,
     message: "csv upload successfull!",
   });
-}
+});

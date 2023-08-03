@@ -10,9 +10,10 @@ import {
   limit,
   sortTransaction,
 } from "../services/transaction.service.js";
+import catchAsync from "../utils/catchAsync.js";
 import checkParamsAndId from "../utils/checkParamsAndId.js";
 
-export async function getAllTransactions(req, res) {
+export const getAllTransactions = catchAsync(async function (req, res) {
   let queryObj = { ...req.query };
 
   console.log("query obj is :", queryObj);
@@ -106,40 +107,40 @@ export async function getAllTransactions(req, res) {
     status: true,
     transactions,
   });
-}
+});
 
 // * specific transaction handlers
-export async function getSpecificTransactionHandler(req, res) {
-  try {
-    let { status, message } = checkParamsAndId(req);
+export const getSpecificTransactionHandler = catchAsync(async function (
+  req,
+  res
+) {
+  let { status, message } = checkParamsAndId(req);
 
-    if (status === false) {
-      return res.status(400).send({
-        status,
-        message,
-      });
-    }
-
-    const result = await getTransactionById(req.params._id);
-    if (!result) {
-      return res.status(500).send({
-        status: false,
-        message: "Internal server error!",
-      });
-    }
-
-    return res.status(200).send({
-      status: true,
-      transaction: result,
-    });
-  } catch (err) {
-    return res.status(500).send({
-      status: false,
-      message: `${err.message}`,
+  if (status === false) {
+    return res.status(400).send({
+      status,
+      message,
     });
   }
-}
-export async function updateSpecificTransactionHandler(req, res) {
+
+  const result = await getTransactionById(req.params._id);
+  if (!result) {
+    return res.status(500).send({
+      status: false,
+      message: "Internal server error!",
+    });
+  }
+
+  return res.status(200).send({
+    status: true,
+    transaction: result,
+  });
+});
+
+export const updateSpecificTransactionHandler = catchAsync(async function (
+  req,
+  res
+) {
   const { status, message } = checkParamsAndId(req);
   if (status === false) {
     return res.status(400).send({
@@ -172,8 +173,12 @@ export async function updateSpecificTransactionHandler(req, res) {
     status: true,
     message: "transaction updated!",
   });
-}
-export async function deleteSpecificTransactionHandler(req, res) {
+});
+
+export const deleteSpecificTransactionHandler = catchAsync(async function (
+  req,
+  res
+) {
   const { status, message } = checkParamsAndId(req);
   if (status === false) {
     return res.status(400).send({
@@ -195,10 +200,10 @@ export async function deleteSpecificTransactionHandler(req, res) {
     status: true,
     message: "Transaction deleted!",
   });
-}
-export async function insertTransactionHandler(req, res) {
-  const insertQuery = req.body.insert;
+});
 
+export const insertTransactionHandler = catchAsync(async function (req, res) {
+  const insertQuery = req.body.insert;
   if (!insertQuery) {
     return res.status(400).send({
       status: false,
@@ -217,67 +222,51 @@ export async function insertTransactionHandler(req, res) {
     status: true,
     message: "transactions inserted!",
   });
-}
+});
 
-export async function updateMultipleTransations(req, res) {
-  try {
-    const filter = req.body.filter;
-    const update = req.body.update;
+export const updateMultipleTransations = catchAsync(async function (req, res) {
+  const filter = req.body.filter;
+  const update = req.body.update;
 
-    if (!filter || !update) {
-      return res.status(400).send({
-        status: false,
-        message: "provide filter and update",
-      });
-    }
-
-    const result = await updateTransactions(filter, update);
-
-    if (!result) {
-      return res.status(500).send({
-        status: false,
-        message: "Internal server error!",
-      });
-    }
-    return res.status(200).send({
-      status: true,
-      message: "updated transactions!",
+  if (!filter || !update) {
+    return res.status(400).send({
+      status: false,
+      message: "provide filter and update",
     });
-  } catch (err) {
-    console.log(err.message);
+  }
+
+  const result = await updateTransactions(filter, update);
+
+  if (!result) {
     return res.status(500).send({
       status: false,
       message: "Internal server error!",
     });
   }
-}
+  return res.status(200).send({
+    status: true,
+    message: "updated transactions!",
+  });
+});
 
-export async function deleteMultipleTransations(req, res) {
-  try {
-    const filter = req.body.filter;
+export const deleteMultipleTransations = catchAsync(async function (req, res) {
+  const filter = req.body.filter;
 
-    if (!filter) {
-      return res.status(400).send({
-        status: false,
-        message: "provide filter doc!",
-      });
-    }
-    const result = await deleteTransactions(filter);
-    if (!result) {
-      return res.status(500).send({
-        status: false,
-        message: "Internal server error!",
-      });
-    }
-    return res.status(200).send({
-      status: true,
-      message: "deleted transactions!",
+  if (!filter) {
+    return res.status(400).send({
+      status: false,
+      message: "provide filter doc!",
     });
-  } catch (err) {
-    console.log(err.message);
+  }
+  const result = await deleteTransactions(filter);
+  if (!result) {
     return res.status(500).send({
       status: false,
       message: "Internal server error!",
     });
   }
-}
+  return res.status(200).send({
+    status: true,
+    message: "deleted transactions!",
+  });
+});
