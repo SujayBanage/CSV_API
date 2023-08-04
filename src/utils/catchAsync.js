@@ -1,7 +1,7 @@
 export default function (controller) {
-  return function (req, res, next) {
+  return async function (req, res, next) {
     try {
-      controller(req, res, next);
+      await controller(req, res, next);
     } catch (err) {
       if (process.env.NODE_ENV === "development") {
         return res.status(500).send({

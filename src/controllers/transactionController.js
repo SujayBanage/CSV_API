@@ -44,7 +44,7 @@ export const getAllTransactions = catchAsync(async function (req, res) {
     );
   }
 
-  const transactions = await transactionCursor.find(JSON.parse(queryStr));
+  let transactions = await transactionCursor;
 
   if (!transactions) {
     return res.status(500).send({
