@@ -1,27 +1,71 @@
-# CSV REST API
+# Transactions CSV API
+
+A REST API used for uploading csv file of transactions to store and query the data . We can perform CRUD operations on transactions data and query data according valid filters
+
+## Tech Stack
+
+**Server:** Node,Express,MongoDB
+
+## Important Libraries and API's Used
+
+- Mongoose ( MongoDB schema )
+- Multer ( CSV file upload )
+- csvtojson (Parsing CSV file)
+- valibot (validation)
+- [Exchange Rates API](https://app.exchangerate-api.com/)
 
 ## Features
 
-1. csv file upload and parsing
+- CSV file upload , parse and store
+- CRUD operations on transactions data
+- sort , limit and filter the data according to valid query params
 
-2. store data in MongoDB
+## Environment Variables
 
-3. Perform CRUD opeartions on transactions
+To run this project, you will need to add the following environment variables to your config.env file
 
-4. fetch different transactions according to filters
+- `PORT`
+- `MONGODB_URI_DEV`
+- `MONGODB_URI_PROD`
+- `EXCHANGE_API_KEY`
+- `EXCHANGE_API_URL`
 
-## Libraries
+## Run Locally
 
-1. Express.js
+Clone the project
 
-2. Mongoose
+```bash
+  git clone https://github.com/SujayBanage/CSV_API.git
+```
 
-3. nodemon (development)
+Go to the project directory
 
-4. Axios
+```bash
+  cd server
+```
 
-5. csvtojson (for parsing csv and converting to json)
+Install dependencies
 
-6. multer (file upload)
+```bash
+  npm install
+```
 
-## API Documentation
+Start the development server
+
+```bash
+  npm run dev
+```
+
+Start the production server
+
+```bash
+    npm run start
+```
+
+## Deployed API
+
+[CSV_API](https://csv-api.onrender.com)
+
+## Documentation
+
+[Postman Documentation](https://documenter.getpostman.com/view/11942656/2s9XxyQYbo)
