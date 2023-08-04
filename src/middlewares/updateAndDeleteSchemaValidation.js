@@ -6,11 +6,13 @@ export default function updateAndDeleteSchemaValidation(req, res, next) {
         message: "Invalid filter object",
       });
     }
-    if (!validateDate(req.body.filter)) {
-      return res.status(400).send({
-        status: false,
-        message: "Invalid Date format",
-      });
+    if (req.body.filter.Date) {
+      if (!validateDate(req.body.filter)) {
+        return res.status(400).send({
+          status: false,
+          message: "Invalid Date format",
+        });
+      }
     }
   }
 
@@ -21,11 +23,13 @@ export default function updateAndDeleteSchemaValidation(req, res, next) {
         message: "Invalid update object",
       });
     }
-    if (!validateDate(req.body.update)) {
-      return res.status(400).send({
-        status: false,
-        message: "Invalid Date format",
-      });
+    if (req.body.filter.Date) {
+      if (!validateDate(req.body.update)) {
+        return res.status(400).send({
+          status: false,
+          message: "Invalid Date format",
+        });
+      }
     }
   }
   next();
