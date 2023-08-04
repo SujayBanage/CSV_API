@@ -1,6 +1,6 @@
-import { string, date, number, object } from "valibot";
+import { string, number, object } from "valibot";
 const transactionSchema = object({
-  Date: date(),
+  Date: string(),
   Description: string(),
   Currency: string(),
   Amount: number(),
