@@ -1,5 +1,11 @@
 import Transaction from "../models/Transaction.model.js";
 export async function bulkInsert(itemsArray) {
+  const existsAlready = await Transaction.find();
+
+  if (existsAlready.length > 0) {
+    await Transaction.deleteMany();
+  }
+
   // * bulk operation initialization
   const bulk = Transaction.collection.initializeOrderedBulkOp();
   // * adding operations to bulk
