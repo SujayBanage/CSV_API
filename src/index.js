@@ -3,6 +3,7 @@ import config from "../config/index.js";
 import connection from "./utils/databaseConnection.js";
 import csvRouter from "./routes/csvRouter.js";
 import transactionsRouter from "./routes/transactionsRouter.js";
+import cors from "cors";
 
 const app = express();
 
@@ -12,6 +13,13 @@ app.use(express.json());
 app.use(
   express.urlencoded({
     extended: false,
+  })
+);
+
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    methods: ["GET", "PATCH", "POST", "DELETE"],
   })
 );
 

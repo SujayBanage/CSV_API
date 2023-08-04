@@ -1,8 +1,14 @@
 import mongoose from "mongoose";
+
 const transactionSchema = new mongoose.Schema({
   Date: {
     type: Date,
     required: true,
+    validation: {
+      validate: function (val) {
+        const date = new Date(val);
+      },
+    },
   },
   Description: {
     type: String,
@@ -11,6 +17,7 @@ const transactionSchema = new mongoose.Schema({
   Amount: {
     type: Number,
     required: true,
+    min: [1, "Amount should not be less than 1"],
   },
   Currency: {
     type: String,

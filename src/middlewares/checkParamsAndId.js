@@ -1,5 +1,5 @@
 import { isValidObjectId } from "mongoose";
-export default function (req) {
+export default function (req, res, next) {
   console.log("params are : ", req.params);
   if (!req.params._id) {
     return {
@@ -14,8 +14,5 @@ export default function (req) {
       message: "_id is invalid",
     };
   }
-  return {
-    status: true,
-    message: "",
-  };
+  next();
 }

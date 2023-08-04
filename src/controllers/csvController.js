@@ -1,5 +1,5 @@
 import csv from "csvtojson";
-import { getRates } from "../utils/currenyConverter.js";
+import getConversionRates from "../utils/getConversionRates.js";
 import { bulkInsert } from "../services/transaction.service.js";
 import catchAsync from "../utils/catchAsync.js";
 
@@ -9,16 +9,14 @@ export const uploadCsvHandler = catchAsync(async (req, res) => {
   if (!req.file) {
     return res.status(404).send({
       status: false,
-      message: "File not found!",
+      message: "please provide file!",
     });
   }
-
-  // * csvtojson() way:-
   let transactions = await csv({}).fromFile(req.file.path);
 
   let currencyMap = new Map();
 
-  // * finding all currencies
+  // * finding all unique currencies
   transactions.forEach((obj) => {
     if (!currencyMap.has(obj.Currency) && obj.Currency !== "INR") {
       currencyMap.set(obj.Currency, 1);
@@ -26,7 +24,7 @@ export const uploadCsvHandler = catchAsync(async (req, res) => {
   });
 
   // * currency rates from INR to specific currency:-
-  const conversionRatesINRObj = await getRates();
+  const conversionRatesINRObj = await getConversionRates();
 
   // * setting conversion rates from currency to INR
   currencyMap.forEach((_, cur) => {

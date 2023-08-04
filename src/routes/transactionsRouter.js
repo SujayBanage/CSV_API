@@ -8,18 +8,22 @@ import {
   updateMultipleTransations,
   getAllTransactions,
 } from "../controllers/transactionController.js";
+import checkParamsAndId from "../middlewares/checkParamsAndId.js";
+import checkQueryParams from "../middlewares/checkQueryParams.js";
+import insertSchemaValidation from "../middlewares/insertSchemaValidation.js";
+import updateAndDeleteSchemaValidation from "../middlewares/updateAndDeleteSchemaValidation.js";
 const transactionsRouter = new Router();
 
 transactionsRouter
   .route("/")
-  .get(getAllTransactions)
-  .post(insertTransactionHandler)
-  .patch(updateMultipleTransations)
-  .delete(deleteMultipleTransations);
+  .get(checkQueryParams, getAllTransactions)
+  .post(insertSchemaValidation, insertTransactionHandler)
+  .patch(updateAndDeleteSchemaValidation, updateMultipleTransations)
+  .delete(updateAndDeleteSchemaValidation, deleteMultipleTransations);
 transactionsRouter
   .route("/:_id")
-  .get(getSpecificTransactionHandler)
-  .patch(updateSpecificTransactionHandler)
-  .delete(deleteSpecificTransactionHandler);
+  .get(checkParamsAndId, getSpecificTransactionHandler)
+  .patch(checkParamsAndId, updateSpecificTransactionHandler)
+  .delete(checkParamsAndId, deleteSpecificTransactionHandler);
 
 export default transactionsRouter;

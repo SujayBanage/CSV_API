@@ -1,4 +1,3 @@
-import Transaction from "../models/Transaction.model.js";
 import {
   getTransactionById,
   insertTransaction,
@@ -11,7 +10,6 @@ import {
   sortTransaction,
 } from "../services/transaction.service.js";
 import catchAsync from "../utils/catchAsync.js";
-import checkParamsAndId from "../utils/checkParamsAndId.js";
 
 export const getAllTransactions = catchAsync(async function (req, res) {
   let queryObj = { ...req.query };
@@ -29,17 +27,8 @@ export const getAllTransactions = catchAsync(async function (req, res) {
 
   let transactionCursor = findAllTransactions(JSON.parse(queryStr));
 
+  // * limit
   if (req.query.limit) {
-    const docs = await Transaction.countDocuments();
-
-    if (req.query.limit < 0 || req.query.page < 0 || req.query.limit > docs) {
-      return res.status(400).send({
-        status: false,
-        message: "invalid limit or page value!",
-      });
-    }
-
-    // * limit
     transactionCursor = limit(
       transactionCursor,
       req.query.limit || 10,
@@ -47,47 +36,15 @@ export const getAllTransactions = catchAsync(async function (req, res) {
     );
   }
 
+  // * sort
   if (req.query.sort) {
-    // * sort
-
-    const fields = [
-      "Date",
-      "-Date",
-      "Description",
-      "Amount",
-      "-Amount",
-      "Currency",
-      "-Currecny",
-    ];
-
-    console.log(req.query.sort.split(","));
-
-    const queryFields = req.query.sort.split(",");
-
-    let flag = false;
-
-    for (let i = 0; i < queryFields.length; i++) {
-      if (fields.includes(queryFields[i])) {
-        flag = true;
-      }
-    }
-
-    if (flag) {
-      transactionCursor = sortTransaction(
-        transactionCursor,
-        req.query.sort.split(",").join(" ")
-      );
-    } else {
-      return res.status(400).send({
-        status: false,
-        message: "invalid sort fields",
-      });
-    }
+    transactionCursor = sortTransaction(
+      transactionCursor,
+      req.query.sort.split(",").join(" ")
+    );
   }
 
   const transactions = await transactionCursor.find(JSON.parse(queryStr));
-
-  // console.log("transactions are : ", transactions);
 
   if (!transactions) {
     return res.status(500).send({
@@ -97,7 +54,7 @@ export const getAllTransactions = catchAsync(async function (req, res) {
   }
 
   if (transactions.length <= 0) {
-    return res.status(500).send({
+    return res.status(404).send({
       status: false,
       message: "transactions not found!",
     });
@@ -114,15 +71,6 @@ export const getSpecificTransactionHandler = catchAsync(async function (
   req,
   res
 ) {
-  let { status, message } = checkParamsAndId(req);
-
-  if (status === false) {
-    return res.status(400).send({
-      status,
-      message,
-    });
-  }
-
   const result = await getTransactionById(req.params._id);
   if (!result) {
     return res.status(500).send({
@@ -141,13 +89,6 @@ export const updateSpecificTransactionHandler = catchAsync(async function (
   req,
   res
 ) {
-  const { status, message } = checkParamsAndId(req);
-  if (status === false) {
-    return res.status(400).send({
-      status,
-      message,
-    });
-  }
   const update = req.body.update;
 
   if (!update) {
@@ -172,6 +113,7 @@ export const updateSpecificTransactionHandler = catchAsync(async function (
   return res.status(200).send({
     status: true,
     message: "transaction updated!",
+    result,
   });
 });
 
@@ -179,14 +121,6 @@ export const deleteSpecificTransactionHandler = catchAsync(async function (
   req,
   res
 ) {
-  const { status, message } = checkParamsAndId(req);
-  if (status === false) {
-    return res.status(400).send({
-      status,
-      message,
-    });
-  }
-
   const result = await deleteTransactionById(req.params._id);
 
   if (!result) {
@@ -199,6 +133,7 @@ export const deleteSpecificTransactionHandler = catchAsync(async function (
   return res.status(200).send({
     status: true,
     message: "Transaction deleted!",
+    result,
   });
 });
 
@@ -221,6 +156,7 @@ export const insertTransactionHandler = catchAsync(async function (req, res) {
   return res.status(200).send({
     status: true,
     message: "transactions inserted!",
+    result,
   });
 });
 
@@ -246,6 +182,7 @@ export const updateMultipleTransations = catchAsync(async function (req, res) {
   return res.status(200).send({
     status: true,
     message: "updated transactions!",
+    result,
   });
 });
 
@@ -268,5 +205,6 @@ export const deleteMultipleTransations = catchAsync(async function (req, res) {
   return res.status(200).send({
     status: true,
     message: "deleted transactions!",
+    result,
   });
 });

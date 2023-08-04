@@ -8,9 +8,7 @@ export async function bulkInsert(itemsArray) {
   });
   // * executing bulk operation
   const results = await bulk.execute();
-
   console.log("bulk insert result!", results);
-
   const transactionsData = await Transaction.find();
   if (transactionsData.length <= 0 || !results) {
     return false;
@@ -37,33 +35,20 @@ export function limit(transactionCursor, limit, page) {
 export async function insertTransaction(insertQuery) {
   if (Array.isArray(insertQuery)) {
     const res = await Transaction.insertMany(insertQuery);
-    if (!res) {
-      return false;
-    }
-    return true;
+    return res;
   }
-
   const res = await Transaction.create(insertQuery);
-  if (!res) {
-    return false;
-  }
-  return true;
+  return res;
 }
 
 export async function getTransactionById(_id) {
   const res = await Transaction.findById({ _id });
-  if (!res) {
-    return false;
-  }
   return res;
 }
 
 export async function deleteTransactionById(_id) {
   const res = await Transaction.findOneAndDelete({ _id });
-  if (!res) {
-    return false;
-  }
-  return true;
+  return res;
 }
 
 export async function updateTransactionById({ _id, updateObj }) {
@@ -77,9 +62,6 @@ export async function updateTransactionById({ _id, updateObj }) {
       new: true,
     }
   );
-  if (!res) {
-    return false;
-  }
   return res;
 }
 
@@ -90,7 +72,7 @@ export async function updateTransactions(filterQuery, updateQuery) {
   const result = await Transaction.updateMany(filterQuery, {
     $set: { ...updateQuery },
   });
-  return result ? true : false;
+  return result;
 }
 
 export async function deleteTransactions(filterQuery) {
@@ -98,5 +80,5 @@ export async function deleteTransactions(filterQuery) {
     filterQuery.Date = new Date(filterQuery.Date);
   }
   const result = await Transaction.deleteMany(filterQuery);
-  return result ? true : false;
+  return result;
 }
