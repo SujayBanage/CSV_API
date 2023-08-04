@@ -28,6 +28,31 @@ export default async function (req, res, next) {
           message: "query params are not valid",
         });
       }
+
+      if (req.query.Date) {
+        const dateValues = Object.values(req.query.Date);
+
+        let validDate = false;
+
+        for (let i = 0; i < dateValues.length; i++) {
+          if (
+            dateValues[i].match(
+              /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/
+            ) !== null
+          ) {
+            validDate = true;
+          } else {
+            validDate = false;
+            break;
+          }
+        }
+        if (validDate === false) {
+          return res.status(400).send({
+            status: false,
+            message: "Invalid Date format!",
+          });
+        }
+      }
     }
 
     const docs = await Transaction.countDocuments();
