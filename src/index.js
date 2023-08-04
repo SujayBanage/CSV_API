@@ -12,7 +12,7 @@ const port = config.PORT || 5000;
 app.use(express.json());
 app.use(
   express.urlencoded({
-    extended: false,
+    extended: true,
   })
 );
 
